@@ -1,2 +1,9 @@
 title:
 description:
+remote_theme: sighingnow/jekyll-gitbook
+plugins:
+  - jekyll-remote-theme
+toc:
+    enabled: true
+    h_min: 1
+    h_max: 3
