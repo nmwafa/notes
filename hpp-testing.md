@@ -45,7 +45,8 @@
 - ?id=null&id;=1
 - ?id=%00&id;=1
 - ?id=undefined&id;=1
-6. Array Style Pollution
+
+## 6. Array Style Pollution
 - id[]=1&id;[]=2
 - id[0]=1&id;[1]=2
 - id[]=1&id;=2
