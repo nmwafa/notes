@@ -22,3 +22,4 @@
 - ### [Active Directory Pentesting](ad-pentesting)
 - ### [Red Hat System Administration I - Ver. 10](rh124)
 - ### [Red Hat System Administration II - Ver. 10](rh134)
+- ### [HTTP Parameter Pollution (HPP) Testing Checklist](hpp-testing)
