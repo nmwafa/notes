@@ -1,4 +1,9 @@
-# WebSocket dalam Perspektif Cybersecurity
+---
+title: "WebSocket"
+layout: default
+---
+
+# WebSocket
 
 ## Daftar Isi
 
