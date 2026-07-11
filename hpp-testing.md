@@ -1,3 +1,8 @@
+---
+title: "HPP Testing Checklist"
+layout: default
+---
+
 # HTTP Parameter Pollution (HPP) Testing Checklist
 
 ## 1. Identify Input Parameters
