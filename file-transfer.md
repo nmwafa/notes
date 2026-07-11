@@ -1,3 +1,8 @@
+---
+title: "File Transfer"
+layout: default
+---
+
 # File Transfer
 
 > Dirangkum dari modul [File Transfers Hack The Box](https://academy.hackthebox.com/course/preview/file-transfers)
