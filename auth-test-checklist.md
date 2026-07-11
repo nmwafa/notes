@@ -1,3 +1,8 @@
+---
+title: "Authentication Testing Checklist"
+layout: default
+---
+
 # Authentication Testing Checklist
 
 ## Table of Contents
