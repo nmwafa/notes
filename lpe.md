@@ -1,3 +1,8 @@
+---
+title: "Linux Privilege Escalation Cheatsheet"
+layout: default
+---
+
 # Linux Privilege Escalation Cheatsheet
 
 >Checklist: https://hacktricks.wiki/en/linux-hardening/linux-privilege-escalation-checklist.html
