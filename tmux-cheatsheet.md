@@ -1,3 +1,8 @@
+---
+title: "TMUX Cheatsheet"
+layout: default
+---
+
 # TMUX Cheatsheet
 
 >Hampir semua *shortcut* di dalam tmux membutuhkan **Prefix Key** terlebih dahulu.
