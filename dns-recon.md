@@ -1,4 +1,9 @@
-# DNS Information Gathering — Cheatsheet
+---
+title: "DNS Recon Cheatsheet"
+layout: default
+---
+
+# DNS Recon Cheatsheet
 
 > Teknik recon, tools, dan commands untuk penetration testing & OSINT  
 > Kategori: `passive` `active` `osint` `brute-force` `advanced`
