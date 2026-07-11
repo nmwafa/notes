@@ -1,3 +1,8 @@
+---
+title: "JSON Web Token"
+layout: default
+---
+
 # JSON Web Token
 
 ## Daftar Isi
