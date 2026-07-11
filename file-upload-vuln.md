@@ -1,3 +1,8 @@
+---
+title: "File Upload Vulnerability Checklist"
+layout: default
+---
+
 # File Upload Vulnerabilities Checklist
 
 > **First author:** Shubham Rooter  
