@@ -23,6 +23,7 @@ Tiga komponen kunci untuk membangun eksploitasi:
 - **Sink** — fungsi atau elemen DOM yang mengeksekusi/memproses nilai gadget tersebut (misalnya `eval`, `innerHTML`, pembuatan child process, pengecekan hak akses, dsb) sehingga menghasilkan dampak nyata seperti XSS atau RCE.
 
 ### Client-side vs Server-side
+
 | Aspek | Client-side | Server-side |
 |---|---|---|
 | Lokasi eksekusi | Browser korban | Server aplikasi (umumnya Node.js) |
