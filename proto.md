@@ -132,9 +132,9 @@ Kerentanan ini tidak terbatas pada backend (Node.js/Bun/Deno), tetapi juga berla
 
 | Target Sink di Browser | Potensi Dampak | Contoh Kode Rentan |
 | :--- | :--- | :--- |
-| `window.location.href` | Open Redirect / Phishing / DOM XSS | `window.location.href = config.redirectUrl \|\| '/home';` |
+| `window.location.href` | Open Redirect / Phishing / DOM XSS | `window.location.href = config.redirectUrl || '/home';` |
 | `HTMLScriptElement.src` | Stored / DOM XSS (Pemuatan Skrip Asing) | `script.src = options.src;` |
-| `Element.innerHTML` | Injeksi Skrip / HTML Injection | `container.innerHTML = options.template \|\| '<p>Default</p>';` |
+| `Element.innerHTML` | Injeksi Skrip / HTML Injection | `container.innerHTML = options.template || '<p>Default</p>';` |
 | `fetch` / `XMLHttpRequest` | Manipulasi Header / Hijacking Permintaan | `fetch('/api/data', options);` |
 
 ---
