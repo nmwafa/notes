@@ -63,24 +63,21 @@ Arti dari hak akses standar berbeda tergantung pada tipe objeknya:
 
 ### 1. Representasi Oktal (Numerik)
 Setiap triplet izin dihitung dari jumlah bobot binernya:
-- `r` = 4 ($2^2$)
-- `w` = 2 ($2^1$)
-- `x` = 1 ($2^0$)
+- `r` = 4 (2^2)
+- `w` = 2 (2^1)
+- `x` = 1 (2^0)
 - `-` = 0
 
 Contoh perhitungan:
-- `rwx` = $4 + 2 + 1 = 7$
-- `rw-` = $4 + 2 + 0 = 6$
-- `r-x` = $4 + 0 + 1 = 5$
-- `r--` = $4 + 0 + 0 = 4$
+- `rwx` = 4 + 2 + 1 = 7
+- `rw-` = 4 + 2 + 0 = 6
+- `r-x` = 4 + 0 + 1 = 5
+- `r--` = 4 + 0 + 0 = 4
 
 **Contoh Format 3-Digit:**
-- `chmod 755 file.sh` $
-ightarrow$ `rwxr-xr-x` (Owner: full, Group: read/exec, Others: read/exec)
-- `chmod 644 file.txt` $
-ightarrow$ `rw-r--r--` (Owner: read/write, Group: read, Others: read)
-- `chmod 700 secret/` $
-ightarrow$ `rwx------` (Owner: full, Group: none, Others: none)
+- `chmod 755 file.sh` -> `rwxr-xr-x` (Owner: full, Group: read/exec, Others: read/exec)
+- `chmod 644 file.txt` -> `rw-r--r--` (Owner: read/write, Group: read, Others: read)
+- `chmod 700 secret/` -> `rwx------` (Owner: full, Group: none, Others: none)
 
 ---
 
@@ -134,12 +131,14 @@ Selain triplet standar 3-digit, Linux memiliki **digit ke-4** (paling depan) yan
 `umask` (*user mask*) menentukan izin default yang akan **dikurangkan / dimatikan** saat sebuah file atau direktori baru dibuat.
 
 ### Batas Izin Maksimum Sistem:
+
 - File biasa: `666` (`rw-rw-rw-`) — sistem operasi sengaja tidak memberi bit eksekusi `x` pada file baru demi keamanan.
 - Direktori: `777` (`rwxrwxrwx`).
 
 ### Logika Perhitungan:
-$$	ext{Izin Akhir File} = 666 - 	ext{Umask}$$
-$$	ext{Izin Akhir Direktori} = 777 - 	ext{Umask}$$
+
+#### Izin Akhir File = 666 - Umask
+#### Izin Akhir Direktori = 777 - Umask
 
 | Nilai Umask | Izin File Default | Izin Folder Default | Deskripsi |
 | :---: | :---: | :---: | :--- |
