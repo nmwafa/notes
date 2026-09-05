@@ -20,7 +20,11 @@ curl -s "https://urlscan.io/api/v1/search/?q=domain:evil.com&size=10000" | jq -r
 ```
 
 ```bash
-curl 'https://crt.name/v1/search?apex=evil.com' | anew subs
+curl -s 'https://crt.name/v1/search?apex=evil.com' | anew subs
+```
+
+```bash
+curl -s "https://crt.sh/?q=evil.com&output=json" | jq -r '.[].name_value' | sed 's/\*\.//g' | sort -u | anew subs
 ```
 
 ## Filter host
