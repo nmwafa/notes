@@ -3,207 +3,470 @@ title: "Nmap Cheatsheet"
 layout: default
 ---
 
-# Nmap Cheatsheet
-> Network Mapper — Panduan Lengkap dari Basic sampai Advanced
->
-> Di Generate oleh Claude Sonnet 4.6 Extended
-
----
+# Cheatsheet Nmap Lengkap
 
 ## Daftar Isi
-- [Host Discovery](#host-discovery)
-- [Port Scan](#port-scan)
-- [Tipe Scan](#tipe-scan)
-- [Service & Version Detection](#service--version-detection)
-- [OS Detection](#os-detection)
-- [NSE — Nmap Scripting Engine](#nse--nmap-scripting-engine)
-- [NSE — Script Kategori Populer](#nse--script-kategori-populer)
-- [Timing & Performa](#timing--performa)
-- [Format Output](#format-output)
-- [Firewall/IDS Evasion](#firewallids-evasion)
-- [Teknik Lanjutan](#teknik-lanjutan)
+
+1. [Pengenalan Nmap](#1-pengenalan-nmap)
+2. [Instalasi](#2-instalasi)
+3. [Sintaks Dasar](#3-sintaks-dasar)
+4. [Spesifikasi Target](#4-spesifikasi-target)
+5. [Host Discovery](#5-host-discovery)
+6. [Status dan State Port](#6-status-dan-state-port)
+7. [Teknik Scanning](#7-teknik-scanning)
+8. [Spesifikasi Port](#8-spesifikasi-port)
+9. [Deteksi Service dan Versi](#9-deteksi-service-dan-versi)
+10. [Deteksi Sistem Operasi (OS)](#10-deteksi-sistem-operasi-os)
+11. [Timing dan Performance](#11-timing-dan-performance)
+12. [Nmap Scripting Engine (NSE)](#12-nmap-scripting-engine-nse)
+13. [Firewall dan IDS Evasion](#13-firewall-dan-ids-evasion)
+14. [Format Output](#14-format-output)
+15. [Kombinasi Options Populer](#15-kombinasi-options-populer)
+16. [Skenario Dunia Nyata](#16-skenario-dunia-nyata)
+17. [Tabel Referensi Cepat](#17-tabel-referensi-cepat)
 
 ---
 
-## Host Discovery
-> Level: **Basic**
+## 1. Pengenalan Nmap
 
-| Perintah | Deskripsi |
-|----------|-----------|
-| `nmap 192.168.1.1` | Scan satu host/IP |
-| `nmap 192.168.1.1-254` | Scan range IP |
-| `nmap 192.168.1.0/24` | Scan seluruh subnet /24 |
-| `nmap -sn 192.168.1.0/24` | Ping scan — hanya cek host aktif, tanpa port scan |
-| `nmap -Pn 192.168.1.1` | Skip host discovery, anggap semua host hidup |
-| `nmap -PS 192.168.1.1` | TCP SYN ping discovery |
-| `nmap -PA 192.168.1.1` | TCP ACK ping discovery |
-| `nmap -PU 192.168.1.1` | UDP ping discovery |
-| `nmap -PE 192.168.1.1` | ICMP echo request ping |
-| `nmap --traceroute 192.168.1.1` | Trace rute ke host target |
-| `nmap -iL targets.txt` | Baca daftar target dari file |
-| `nmap --exclude 192.168.1.5 192.168.1.0/24` | Kecualikan IP tertentu dari scan |
+Nmap digunakan untuk:
 
----
+- Menemukan host yang aktif di sebuah jaringan
+- Mendeteksi port yang terbuka pada host tersebut
+- Mengidentifikasi service dan versi software yang berjalan
+- Menebak sistem operasi target
+- Menjalankan script otomatis (NSE) untuk audit konfigurasi dan vulnerability
 
-## Port Scan
-> Level: **Basic**
+**Tools pendukung satu paket dengan nmap:**
 
-| Perintah | Deskripsi |
-|----------|-----------|
-| `nmap -p 22 192.168.1.1` | Scan port spesifik |
-| `nmap -p 22,80,443 192.168.1.1` | Scan beberapa port sekaligus |
-| `nmap -p 1-1000 192.168.1.1` | Scan range port |
-| `nmap -p- 192.168.1.1` | Scan semua 65535 port |
-| `nmap --top-ports 100 192.168.1.1` | Scan 100 port paling umum |
-| `nmap -F 192.168.1.1` | Fast scan — 100 port top (lebih cepat) |
-| `nmap -p U:53,T:80 192.168.1.1` | Scan UDP port 53 dan TCP port 80 |
+| Tool | Fungsi |
+|---|---|
+| `ncat` | Pengganti modern `netcat`, untuk koneksi TCP/UDP manual |
+| `nping` | Pembuat paket kustom untuk uji ping/traceroute |
+| `ndiff` | Membandingkan dua hasil scan nmap |
+| `zenmap` | GUI resmi untuk nmap |
 
 ---
 
-## Tipe Scan
-> Level: **Intermediate**
+## 2. Instalasi
 
-| Perintah | Deskripsi |
-|----------|-----------|
-| `nmap -sS 192.168.1.1` | TCP SYN scan (stealth) — default jika root |
-| `nmap -sT 192.168.1.1` | TCP connect scan — untuk non-root user |
-| `nmap -sU 192.168.1.1` | UDP scan — lebih lambat, perlu root |
-| `nmap -sA 192.168.1.1` | TCP ACK scan — deteksi firewall rules |
-| `nmap -sW 192.168.1.1` | TCP Window scan |
-| `nmap -sN 192.168.1.1` | TCP Null scan — tidak ada flag TCP |
-| `nmap -sF 192.168.1.1` | TCP FIN scan — hanya flag FIN |
-| `nmap -sX 192.168.1.1` | Xmas scan — FIN, URG, PSH flags aktif |
-| `nmap -sM 192.168.1.1` | TCP Maimon scan |
-| `nmap -sI zombie 192.168.1.1` | Idle/Zombie scan — IP spoofing via zombie host |
+```bash
+# Debian / Ubuntu
+sudo apt update && sudo apt install nmap -y
 
----
+# CentOS / RHEL / Fedora
+sudo dnf install nmap -y
 
-## Service & Version Detection
-> Level: **Intermediate**
+# macOS (Homebrew)
+brew install nmap
 
-| Perintah | Deskripsi |
-|----------|-----------|
-| `nmap -sV 192.168.1.1` | Deteksi versi service yang berjalan |
-| `nmap -sV --version-intensity 9 192.168.1.1` | Version detection intensitas maksimal (0-9) |
-| `nmap -sV --version-light 192.168.1.1` | Version detection ringan (intensitas 2) |
-| `nmap -sV --version-all 192.168.1.1` | Coba semua probe untuk version detection |
-| `nmap -A 192.168.1.1` | Aggressive: OS, version, script, traceroute sekaligus |
+# Verifikasi instalasi
+nmap --version
+```
+
+Windows: unduh installer dari situs resmi nmap.org.
 
 ---
 
-## OS Detection
-> Level: **Intermediate**
+## 3. Sintaks Dasar
 
-| Perintah | Deskripsi |
-|----------|-----------|
-| `nmap -O 192.168.1.1` | OS detection (perlu root/admin) |
-| `nmap -O --osscan-guess 192.168.1.1` | Tebak OS walau tidak pasti |
-| `nmap -O --osscan-limit 192.168.1.1` | Hanya OS scan jika ada port terbuka & tertutup |
-| `nmap -O --max-os-tries 3 192.168.1.1` | Batasi percobaan OS detection |
+```bash
+nmap [Jenis Scan] [Options] {target}
+```
 
----
+Contoh paling sederhana:
 
-## NSE — Nmap Scripting Engine
-> Level: **Intermediate**
+```bash
+nmap 192.168.1.1
+nmap scanme.nmap.org
+```
 
-| Perintah | Deskripsi |
-|----------|-----------|
-| `nmap -sC 192.168.1.1` | Jalankan default scripts (sama dengan `--script=default`) |
-| `nmap --script=http-title 192.168.1.1` | Jalankan script spesifik |
-| `nmap --script=http-* 192.168.1.1` | Jalankan semua script HTTP |
-| `nmap --script=vuln 192.168.1.1` | Cek kerentanan umum |
-| `nmap --script=auth 192.168.1.1` | Script autentikasi (brute force, bypass) |
-| `nmap --script=safe 192.168.1.1` | Hanya jalankan script yang aman |
-| `nmap --script=banner 192.168.1.1` | Ambil banner dari service |
-| `nmap --script=smb-vuln-* 192.168.1.1` | Cek kerentanan SMB (EternalBlue dll) |
-| `nmap --script=ssl-enum-ciphers -p 443 192.168.1.1` | Enum cipher suite SSL/TLS |
-| `nmap --script-args='user=admin,pass=1234' --script=http-auth 192.168.1.1` | Kirim argumen ke script |
-| `nmap --script-help http-title` | Lihat dokumentasi script tertentu |
-| `nmap --script-updatedb` | Update database script NSE |
+Jika jenis scan tidak disebutkan, nmap secara default menggunakan:
+- `-sS` (SYN scan) bila dijalankan dengan `sudo`/root
+- `-sT` (TCP connect scan) bila dijalankan tanpa privilege root
+- 1000 port yang paling umum digunakan
+
+**Catatan tambahan:**
+- `-6` → aktifkan scanning IPv6
+- Sebagian besar teknik scan (`-sS`, `-sU`, `-O`, dll) membutuhkan privilege root/administrator
 
 ---
 
-## NSE — Script Kategori Populer
-> Level: **Advanced**
+## 4. Spesifikasi Target
 
-| Perintah | Deskripsi |
-|----------|-----------|
-| `nmap --script=discovery 192.168.1.1` | Kumpulkan informasi tambahan tentang host |
-| `nmap --script=exploit 192.168.1.1` | Script eksploitasi (gunakan dengan izin!) |
-| `nmap --script=brute 192.168.1.1` | Brute force login berbagai protokol |
-| `nmap --script=dos 192.168.1.1` | Script DoS — sangat hati-hati! |
-| `nmap --script=intrusive 192.168.1.1` | Script invasif — bisa crash service target |
-| `nmap --script=ftp-anon -p 21 192.168.1.1` | Cek akses FTP anonim |
-| `nmap --script=dns-brute --script-args dns-brute.domain=target.com` | DNS subdomain brute force |
+| Perintah | Keterangan |
+|---|---|
+| `nmap 192.168.1.1` | Scan satu alamat IP |
+| `nmap example.com` | Scan berdasarkan hostname/domain |
+| `nmap 192.168.1.1 192.168.1.5` | Scan beberapa target sekaligus |
+| `nmap 192.168.1.1-50` | Scan range IP |
+| `nmap 192.168.1.0/24` | Scan seluruh subnet (notasi CIDR) |
+| `nmap -iL targets.txt` | Ambil daftar target dari file |
+| `nmap -iR 100` | Scan 100 target acak di internet |
+| `nmap 192.168.1.0/24 --exclude 192.168.1.5` | Scan subnet tapi kecualikan IP tertentu |
+| `nmap -iL targets.txt --excludefile skip.txt` | Kecualikan target dari file |
 
----
-
-## Timing & Performa
-> Level: **Intermediate**
-
-| Perintah | Deskripsi |
-|----------|-----------|
-| `nmap -T0 192.168.1.1` | Paranoid — sangat lambat, IDS evasion |
-| `nmap -T1 192.168.1.1` | Sneaky — lambat untuk evasion |
-| `nmap -T2 192.168.1.1` | Polite — hemat bandwidth |
-| `nmap -T3 192.168.1.1` | Normal — default |
-| `nmap -T4 192.168.1.1` | Aggressive — lebih cepat, jaringan cepat |
-| `nmap -T5 192.168.1.1` | Insane — sangat cepat, mungkin miss port |
-| `nmap --min-rate 1000 192.168.1.1` | Kirim minimal 1000 paket per detik |
-| `nmap --max-retries 1 192.168.1.1` | Batasi retry per port |
-| `nmap --host-timeout 30s 192.168.1.1` | Timeout per host 30 detik |
+Contoh isi `targets.txt`:
+```
+192.168.1.1
+192.168.1.10-20
+10.0.0.0/24
+scanme.nmap.org
+```
 
 ---
 
-## Format Output
-> Level: **Basic**
+## 5. Host Discovery
 
-| Perintah | Deskripsi |
-|----------|-----------|
-| `nmap -oN output.txt 192.168.1.1` | Simpan output normal ke file |
-| `nmap -oX output.xml 192.168.1.1` | Simpan output format XML |
-| `nmap -oG output.gnmap 192.168.1.1` | Simpan output grepable |
-| `nmap -oA output 192.168.1.1` | Simpan semua format sekaligus (.nmap, .xml, .gnmap) |
-| `nmap -v 192.168.1.1` | Verbose — tampilkan lebih banyak info |
-| `nmap -vv 192.168.1.1` | Very verbose |
-| `nmap -d 192.168.1.1` | Debug mode |
-| `nmap --open 192.168.1.1` | Tampilkan hanya port yang terbuka |
-| `nmap --reason 192.168.1.1` | Tampilkan alasan status port |
-| `nmap --packet-trace 192.168.1.1` | Tampilkan semua paket yang dikirim/diterima |
+Tahap awal untuk menentukan host mana yang aktif, sebelum scan port dijalankan.
 
----
+| Option | Fungsi |
+|---|---|
+| `-sn` | Ping scan saja, **tanpa** scan port |
+| `-Pn` | Lewati host discovery, anggap semua target aktif (berguna jika ICMP diblokir) |
+| `-sL` | List scan — hanya menampilkan daftar target, tidak mengirim paket sama sekali |
+| `-PE` | ICMP Echo request (ping standar) |
+| `-PP` | ICMP Timestamp request |
+| `-PM` | ICMP Address Mask request |
+| `-PS<port>` | TCP SYN discovery ke port tertentu (default 80) |
+| `-PA<port>` | TCP ACK discovery |
+| `-PU<port>` | UDP discovery |
+| `-PR` | ARP discovery — otomatis dipakai & paling akurat di jaringan lokal |
+| `-n` | Nonaktifkan DNS resolution (lebih cepat) |
+| `-R` | Paksa DNS resolution untuk semua target |
 
-## Firewall/IDS Evasion
-> Level: **Advanced**
+```bash
+# Cari host aktif di jaringan lokal tanpa scan port
+nmap -sn 192.168.1.0/24
 
-| Perintah | Deskripsi |
-|----------|-----------|
-| `nmap -f 192.168.1.1` | Fragment paket — bypass beberapa firewall |
-| `nmap --mtu 24 192.168.1.1` | Set ukuran MTU custom untuk fragmentasi |
-| `nmap -D RND:10 192.168.1.1` | Decoy: 10 IP palsu acak + IP asli |
-| `nmap -D 10.0.0.1,10.0.0.2 192.168.1.1` | Decoy: IP palsu spesifik |
-| `nmap -S 10.0.0.99 192.168.1.1` | Spoof source IP address |
-| `nmap -e eth0 192.168.1.1` | Gunakan interface jaringan tertentu |
-| `nmap --source-port 53 192.168.1.1` | Spoof source port (misal port DNS 53) |
-| `nmap --data-length 25 192.168.1.1` | Tambah data acak di paket |
-| `nmap --badsum 192.168.1.1` | Kirim paket dengan checksum rusak |
-| `nmap --proxies http://proxy:8080 192.168.1.1` | Gunakan proxy/rantai proxy |
-| `nmap --spoof-mac 0 192.168.1.1` | Spoof MAC address acak |
-| `nmap --spoof-mac Dell 192.168.1.1` | Spoof MAC sesuai vendor |
+# Paksa scan meski target tidak merespon ping
+nmap -Pn 192.168.1.10
+```
 
 ---
 
-## Teknik Lanjutan
-> Level: **Advanced**
+## 6. Status dan State Port
 
-| Perintah | Deskripsi |
-|----------|-----------|
-| `nmap --script=http-enum -p 80,443 192.168.1.1` | Enum direktori & file web umum |
-| `nmap -sV -sC -p- --min-rate 5000 192.168.1.1` | Full scan cepat untuk pentest (semua port) |
-| `nmap -sn --script=nbstat 192.168.1.0/24` | Ambil nama NetBIOS seluruh jaringan |
-| `nmap -6 fe80::1` | Scan target IPv6 |
-| `nmap --script=broadcast-dhcp-discover` | Discover DHCP server di jaringan lokal |
-| `nmap --script=targets-ipv6-multicast-echo` | Discover host IPv6 via multicast |
-| `nmap --script=firewalk --traceroute 192.168.1.1` | Identifikasi port yang di-filter firewall |
-| `nmap --scanflags URGACKPSHRSTSYNFIN 192.168.1.1` | Custom TCP flags untuk scan |
-| `nmap --ip-options 'L 192.168.1.1 192.168.1.2' 192.168.1.1` | Gunakan IP options untuk loose source routing |
+Setiap port yang di-scan akan diberi salah satu status berikut:
+
+| State | Arti |
+|---|---|
+| `open` | Ada aplikasi yang aktif menerima koneksi di port ini |
+| `closed` | Port terjangkau, tapi tidak ada aplikasi yang listen |
+| `filtered` | Firewall/filter memblokir probe, nmap tidak bisa memastikan status |
+| `unfiltered` | Port terjangkau tapi nmap tidak bisa pastikan open/closed (muncul di ACK scan) |
+| `open\|filtered` | Nmap tidak bisa membedakan open atau filtered (umum di scan UDP/NULL/FIN/Xmas) |
+| `closed\|filtered` | Nmap tidak bisa membedakan closed atau filtered (muncul di idle scan) |
+
+---
+
+## 7. Teknik Scanning
+
+| Option | Nama | Keterangan |
+|---|---|---|
+| `-sS` | SYN Scan | "Stealth scan", paling umum & cepat, tidak menyelesaikan TCP handshake. Butuh root |
+| `-sT` | TCP Connect Scan | Menyelesaikan full 3-way handshake, tidak butuh root, tapi lebih mudah tercatat di log |
+| `-sU` | UDP Scan | Scan port UDP; jauh lebih lambat karena sifat UDP yang connectionless |
+| `-sA` | ACK Scan | Untuk memetakan aturan firewall, bukan mencari port terbuka |
+| `-sW` | Window Scan | Mirip ACK scan, memanfaatkan TCP window size untuk membedakan state |
+| `-sM` | Maimon Scan | Kombinasi flag FIN/ACK, memanfaatkan bug lama pada BSD |
+| `-sN` | Null Scan | Paket tanpa flag TCP sama sekali, kadang bisa lolos firewall sederhana |
+| `-sF` | FIN Scan | Paket dengan flag FIN saja |
+| `-sX` | Xmas Scan | Paket dengan flag FIN + PSH + URG menyala bersamaan |
+| `-sO` | IP Protocol Scan | Deteksi protokol IP yang didukung host (TCP, UDP, ICMP, GRE, dll) |
+| `-sY` | SCTP INIT Scan | Untuk protokol SCTP |
+| `-sZ` | SCTP COOKIE ECHO Scan | Varian stealth untuk SCTP |
+| `-sI <zombie>` | Idle/Zombie Scan | Scan via host pihak ketiga agar identitas asli tersembunyi |
+
+```bash
+# SYN scan standar
+sudo nmap -sS 192.168.1.10
+
+# TCP connect scan tanpa root
+nmap -sT 192.168.1.10
+
+# UDP scan pada port yang paling umum
+sudo nmap -sU --top-ports 20 192.168.1.10
+
+# Scan TCP + UDP dalam satu perintah
+sudo nmap -sS -sU -p T:22,80,443,U:53,161 192.168.1.10
+```
+
+---
+
+## 8. Spesifikasi Port
+
+| Option | Fungsi |
+|---|---|
+| `-p 80` | Scan hanya port 80 |
+| `-p 80,443,8080` | Scan beberapa port spesifik |
+| `-p 1-1000` | Scan range port |
+| `-p-` | Scan semua 65535 port |
+| `-p U:53,111,T:21-25,80` | Kombinasi TCP dan UDP (perlu `-sS -sU` bersamaan) |
+| `-F` | Fast scan — 100 port tersering |
+| `--top-ports 50` | Scan N port paling sering dipakai |
+| `-r` | Scan port berurutan, tidak diacak |
+
+```bash
+nmap -p 80,443,8080,8443 192.168.1.10
+nmap -p- -T4 192.168.1.10
+nmap --top-ports 50 192.168.1.10
+```
+
+---
+
+## 9. Deteksi Service dan Versi
+
+| Option | Fungsi |
+|---|---|
+| `-sV` | Deteksi versi service pada port yang terbuka |
+| `--version-intensity <0-9>` | Level intensitas probe (0 = ringan, 9 = lengkap) |
+| `--version-light` | Setara intensity 2, cepat |
+| `--version-all` | Setara intensity 9, paling akurat tapi paling lambat |
+| `-A` | Aggressive scan: gabungan `-O -sV -sC --traceroute` |
+
+```bash
+nmap -sV 192.168.1.10
+nmap -sV --version-intensity 9 192.168.1.10
+sudo nmap -A 192.168.1.10
+```
+
+---
+
+## 10. Deteksi Sistem Operasi (OS)
+
+| Option | Fungsi |
+|---|---|
+| `-O` | Aktifkan deteksi OS (idealnya ada 1 port open & 1 closed untuk akurasi terbaik) |
+| `--osscan-limit` | Hanya coba deteksi OS pada target dengan kandidat kuat |
+| `--osscan-guess` | Tebak OS lebih agresif walau data tidak sempurna |
+| `--max-os-tries <n>` | Batasi jumlah percobaan deteksi OS |
+
+```bash
+sudo nmap -O 192.168.1.10
+sudo nmap -O --osscan-guess 192.168.1.10
+```
+
+---
+
+## 11. Timing dan Performance
+
+Nmap punya 6 template kecepatan, dari paling hati-hati sampai paling agresif:
+
+| Template | Nama | Kapan dipakai |
+|---|---|---|
+| `-T0` | Paranoid | Sangat lambat, evasion IDS maksimal (bisa berjam-jam) |
+| `-T1` | Sneaky | Lambat, untuk evasion |
+| `-T2` | Polite | Lebih pelan dari default, hemat bandwidth |
+| `-T3` | Normal | **Default** nmap |
+| `-T4` | Aggressive | Umum dipakai untuk jaringan stabil/cepat |
+| `-T5` | Insane | Tercepat, berisiko banyak hasil tidak akurat |
+
+Fine-tuning manual:
+```bash
+--min-rate 300        # minimal paket per detik
+--max-rate 1000       # maksimal paket per detik
+--min-parallelism 10  # jumlah probe paralel minimum
+--max-retries 2       # maksimal retransmisi paket
+--host-timeout 30m    # skip host jika kelamaan
+--scan-delay 1s        # jeda antar probe (evasion)
+```
+
+```bash
+# Scan cepat untuk jaringan lokal
+nmap -T4 -F 192.168.1.0/24
+
+# Scan pelan untuk menghindari deteksi IDS
+nmap -T2 --scan-delay 2s 192.168.1.10
+```
+
+---
+
+## 12. Nmap Scripting Engine (NSE)
+
+NSE menjalankan script Lua bawaan nmap untuk otomatisasi discovery, audit, hingga deteksi vulnerability.
+
+| Option | Fungsi |
+|---|---|
+| `-sC` | Jalankan script kategori `default` |
+| `--script=<nama>` | Jalankan script spesifik |
+| `--script=<kategori>` | Jalankan semua script dalam satu kategori |
+| `--script-args=<args>` | Kirim argumen ke script |
+| `--script-help=<nama>` | Lihat dokumentasi sebuah script |
+| `--script-updatedb` | Update database script |
+
+**Kategori NSE:**
+
+| Kategori | Keterangan |
+|---|---|
+| `auth` | Cek mekanisme autentikasi |
+| `broadcast` | Discovery via broadcast di LAN |
+| `brute` | Brute-force credential |
+| `default` | Script standar (dipakai oleh `-sC`) |
+| `discovery` | Menggali info tambahan jaringan/service |
+| `dos` | Uji denial-of-service (berisiko membuat service crash) |
+| `exploit` | Eksploitasi vulnerability yang sudah diketahui |
+| `external` | Melibatkan database/resource eksternal |
+| `fuzzer` | Fuzzing terhadap service |
+| `intrusive` | Berpotensi mengganggu target |
+| `malware` | Deteksi indikasi backdoor/malware |
+| `safe` | Aman, tidak mengganggu target |
+| `version` | Membantu deteksi versi (dipakai oleh `-sV`) |
+| `vuln` | Cek vulnerability spesifik yang diketahui |
+
+```bash
+# Script default
+nmap -sC 192.168.1.10
+
+# Cek vulnerability
+nmap -sV --script vuln 192.168.1.10
+
+# Script tertentu
+nmap --script http-title 192.168.1.10
+
+# Semua script berawalan "http-"
+nmap --script "http-*" 192.168.1.10
+
+# Script dengan argumen (brute-force login)
+nmap --script http-brute --script-args userdb=users.txt,passdb=pass.txt 192.168.1.10
+
+# Cek kerentanan SMB terkenal (EternalBlue)
+nmap -p445 --script smb-vuln-ms17-010 192.168.1.10
+```
+
+---
+
+## 13. Firewall dan IDS Evasion
+
+> Teknik berikut ditujukan untuk pengujian keamanan yang sah (authorized pentest), bukan untuk menyusup ke sistem tanpa izin.
+
+| Option | Fungsi |
+|---|---|
+| `-f` | Fragmentasi paket agar lolos filter sederhana |
+| `--mtu <n>` | Set ukuran MTU kustom (kelipatan 8) |
+| `-D decoy1,decoy2,ME` | Scan dengan decoy IP palsu agar sumber tersamar |
+| `-D RND:5` | Buat 5 decoy acak otomatis |
+| `-S <IP>` | Spoof source IP (butuh kontrol routing) |
+| `-e <interface>` | Tentukan network interface yang dipakai |
+| `-g <port>` / `--source-port <port>` | Spoof source port (mis. 53, sering dipercaya firewall) |
+| `--data-length <n>` | Tambahkan data random ke paket |
+| `--spoof-mac <MAC/vendor/0>` | Spoof MAC address (0 = acak penuh) |
+| `--badsum` | Kirim checksum salah untuk uji reaksi firewall/IDS |
+
+```bash
+sudo nmap -f 192.168.1.10
+sudo nmap -D 10.0.0.1,10.0.0.2,ME 192.168.1.10
+sudo nmap -g 53 192.168.1.10
+sudo nmap --spoof-mac Apple 192.168.1.10
+```
+
+---
+
+## 14. Format Output
+
+| Option | Fungsi |
+|---|---|
+| `-oN file.txt` | Simpan output normal (seperti tampilan terminal) |
+| `-oX file.xml` | Simpan output XML (untuk diparsing tools lain) |
+| `-oG file.gnmap` | Simpan output grepable |
+| `-oA basename` | Simpan ke 3 format sekaligus (.nmap/.xml/.gnmap) |
+| `-v` / `-vv` | Verbose / very verbose |
+| `-d` / `-dd` | Mode debug |
+| `--reason` | Tampilkan alasan status port (mis. "syn-ack") |
+| `--open` | Hanya tampilkan port yang open |
+| `--stats-every 10s` | Tampilkan progress tiap interval waktu |
+| `--traceroute` | Sertakan hasil traceroute ke target |
+| `--packet-trace` | Tampilkan tiap paket yang dikirim/diterima (debug mendalam) |
+
+```bash
+nmap -A -oA hasil_scan 192.168.1.10
+nmap --open 192.168.1.0/24
+nmap -v --stats-every 10s -p- 192.168.1.10
+```
+
+---
+
+## 15. Kombinasi Options Populer
+
+```bash
+# 1. Quick scan — cek cepat port umum
+nmap -T4 -F 192.168.1.10
+
+# 2. Scan standar pentest: versi + OS + script default
+sudo nmap -sS -sV -O -sC -T4 192.168.1.10
+
+# 3. Full aggressive scan, semua port
+sudo nmap -A -T4 -p- 192.168.1.10
+
+# 4. Stealth scan, evasion dasar
+sudo nmap -sS -T2 -f --data-length 20 192.168.1.10
+
+# 5. Vulnerability assessment + simpan laporan
+nmap -sV --script vuln -oN vuln_report.txt 192.168.1.10
+
+# 6. Discovery jaringan lokal + resolusi hostname
+nmap -sn -R 192.168.1.0/24
+
+# 7. Scan semua port + service + script, output lengkap
+sudo nmap -p- -sV -sC -oA full_scan 192.168.1.10
+
+# 8. Scan UDP top port (sering terlewat pentester pemula)
+sudo nmap -sU --top-ports 100 -sV 192.168.1.10
+
+# 9. Pemetaan aturan firewall
+sudo nmap -sA -p 1-1000 192.168.1.10
+
+# 10. Scan subnet besar dengan rate tinggi (jaringan sendiri)
+sudo nmap -sS -T4 --min-rate 1000 -p- 192.168.1.0/24
+```
+
+---
+
+## 16. Skenario Dunia Nyata
+
+**A. Menemukan semua device aktif di jaringan rumah/kantor**
+```bash
+sudo nmap -sn 192.168.1.0/24
+```
+
+**B. Audit keamanan dasar server web milik sendiri**
+```bash
+sudo nmap -sV -sC -p 80,443 --script "http-vuln*" example.com
+```
+
+**C. Cek apakah server rentan EternalBlue (MS17-010)**
+```bash
+sudo nmap -p445 --script smb-vuln-ms17-010 192.168.1.10
+```
+
+**D. Inventaris service seluruh subnet untuk dokumentasi jaringan**
+```bash
+sudo nmap -sV -O -oA inventaris_jaringan 192.168.1.0/24
+```
+
+**E. Simulasi pentest menyeluruh (dengan izin resmi/scope tertulis)**
+```bash
+sudo nmap -sS -sV -O -A --script vuln -oA laporan_pentest 192.168.1.10
+```
+
+**F. Latihan tanpa risiko hukum**
+```bash
+# scanme.nmap.org disediakan resmi oleh tim nmap untuk latihan publik
+nmap -A scanme.nmap.org
+```
+
+---
+
+## 17. Tabel Referensi Cepat
+
+| Kategori | Option Kunci | Contoh Singkat |
+|---|---|---|
+| Scan dasar | `-sS` `-sT` `-sU` | `nmap -sS target` |
+| Target | `-iL` `--exclude` | `nmap -iL list.txt` |
+| Discovery | `-sn` `-Pn` | `nmap -sn 10.0.0.0/24` |
+| Port | `-p` `-p-` `-F` `--top-ports` | `nmap -p 1-100 target` |
+| Deteksi | `-sV` `-O` `-A` | `nmap -A target` |
+| Script | `-sC` `--script` | `nmap --script vuln target` |
+| Timing | `-T0` … `-T5` | `nmap -T4 target` |
+| Evasion | `-f` `-D` `-g` `--spoof-mac` | `nmap -f -D RND:5 target` |
+| Output | `-oN` `-oX` `-oA` `--open` | `nmap -oA hasil target` |
