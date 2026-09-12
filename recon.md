@@ -40,11 +40,11 @@ dirsearch -u https://evil.com --full-url -i 200,301,302,403 -r --crawl
 ```
 
 ```bash
--e sh,php,cgi,htm,html,shtm,shtml,js,txt,bak,zip,old,conf,log,pl,asp,aspx,jsp,sql,db,sqlite,mdb,tar,gz,7z,rar,json,xml,yml,yaml,ini,java,py,rb,php3,php4,php5
+-e sh,php,cgi,htm,html,shtm,shtml,js,txt,bak,zip,old,conf,log,pl,asp,aspx,jsp,sql,db,sqlite,mdb,tar,gz,7z,rar,json,xml,yml,yaml,ini,java,py,rb,php3,php4,php5,inc
 ```
 
 ```bash
--e sh,env,js,bak,old,sql,conf,cfg,ini,log,txt,json,xml,yml,yaml,php,asp,aspx,jsp,py,rb,pl,cgi,war,jar,zip,tar,gz,db,sqlite,key,pem,crt,cer,p12,pfx,htpasswd,htaccess,git,svn,ds_store,git-credentials,netrc,npmrc,composer,lock,properties,config,backup,tmp,swp,swo,orig,save,dist,example,sample,inc,include,local,dev,prod,test,staging,production,development,debug,error,access,audit,trace,dump,pid,cache,session,cookies,history,bash_history,mysql_history,psql_history,viminfo,curlrc,secret,token,credential,password,dockerfile,kubeconfig,terraform,tfstate,ppk,ovpn
+-e sh,env,js,bak,old,sql,conf,cfg,ini,log,txt,json,xml,yml,yaml,php,asp,aspx,jsp,py,rb,pl,cgi,war,jar,zip,tar,gz,db,sqlite,key,pem,crt,cer,p12,pfx,htpasswd,htaccess,git,svn,inc,asa,ds_store,git-credentials,netrc,npmrc,composer,lock,properties,config,backup,tmp,swp,swo,orig,save,dist,example,sample,inc,include,local,dev,prod,test,staging,production,development,debug,error,access,audit,trace,dump,pid,cache,session,cookies,history,bash_history,mysql_history,psql_history,viminfo,curlrc,secret,token,credential,password,dockerfile,kubeconfig,ovpn
 ```
 
 ## Crawling JS
