@@ -1,8 +1,5 @@
 title: Notes
-description: Personal notes
+description: Nur Muhammad Wafa
 theme: just-the-docs
 
 url: https://just-the-docs.github.io
-
-plugins:
-  - jekyll-seo-tag
